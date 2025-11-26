@@ -1,5 +1,6 @@
-# Fragment for Contact Page Template ACF Fields
-# Use this fragment when querying pages with the Contact template
+# Fragment for Contact Page Template
+# Note: No dedicated ACF contact fields exist in schema
+# Contact information should be managed via page content or flexibleContent
 
 fragment ContactPageFields on Page {
   id
@@ -18,13 +19,18 @@ fragment ContactPageFields on Page {
       altText
     }
   }
-  # ACF Contact Fields
-  acfContactFields {
-    address
-    phone
-    email
-    hours
-    mapEmbed
+  # Use flexibleContent if contact info is in flexible content layouts
+  flexibleContent {
+    flexibleContent {
+      __typename
+      ... on FlexibleContentFlexibleContentWysiwygLayout {
+        fieldGroupName
+        content
+      }
+      ... on FlexibleContentFlexibleContentHtmlLayout {
+        fieldGroupName
+        html
+      }
+    }
   }
 }
-

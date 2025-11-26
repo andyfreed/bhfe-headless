@@ -27,6 +27,7 @@ fragment CourseMaterialFields on FlmsCourse {
   courseMaterials {
     title
     file
+    status
   }
 }
 
@@ -47,16 +48,4 @@ fragment CourseFullFields on FlmsCourse {
   ...CourseAcfFields
 }
 
-# Course card for listings
-fragment CourseCardFields on FlmsCourse {
-  id
-  databaseId
-  title
-  uri
-  courseNumber
-  courseCredits {
-    name
-    credits
-  }
-}
-
+# Note: CourseCardFields is defined in template-course.graphql

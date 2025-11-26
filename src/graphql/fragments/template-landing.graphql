@@ -23,7 +23,8 @@ fragment LandingPageFields on Page {
     }
   }
   # ACF Flexible Content for Landing Pages
-  acfPageFields {
+  # Note: flexibleContent is directly on Page, not nested under acfPageFields
+  flexibleContent {
     flexibleContent {
       __typename
       ... on FlexibleContentFlexibleContentHeroLayout {
@@ -41,13 +42,15 @@ fragment LandingPageFields on Page {
         }
         heading
         subheading
-        buttons {
-          button {
-            url
-            title
-            target
-          }
+        # CTA button is an AcfLink type
+        ctaButton {
+          url
+          title
+          target
         }
+        colorScheme
+        textAlignment
+        containerAlignment
       }
       ... on FlexibleContentFlexibleContentHeadingLayout {
         fieldGroupName
@@ -59,10 +62,17 @@ fragment LandingPageFields on Page {
         heading
         textAlignment
         containerAlignment
+        size
+        tag
+        fontWeight
+        # headingLinksTo is a ContentNode connection, not AcfLink
         headingLinksTo {
-          url
-          title
-          target
+          nodes {
+            ... on NodeWithTitle {
+              title
+            }
+            uri
+          }
         }
       }
       ... on FlexibleContentFlexibleContentCtaButtonsLayout {
@@ -72,7 +82,7 @@ fragment LandingPageFields on Page {
         animation
         animationSpeed
         anchorPlacement
-        content
+        # buttons is an array of objects with button (AcfLink) inside
         buttons {
           button {
             url
@@ -80,6 +90,11 @@ fragment LandingPageFields on Page {
             target
           }
         }
+        buttonStyle
+        columns
+        colorScheme
+        textAlignment
+        containerAlignment
       }
       ... on FlexibleContentFlexibleContentImageModuleLayout {
         fieldGroupName
@@ -94,13 +109,9 @@ fragment LandingPageFields on Page {
             altText
           }
         }
-        caption
         imageSize
-        link {
-          url
-          title
-          target
-        }
+        imageAlignment
+        forceImagesFullWidth
       }
       ... on FlexibleContentFlexibleContentWysiwygLayout {
         fieldGroupName
@@ -124,7 +135,18 @@ fragment LandingPageFields on Page {
           defaultState
         }
       }
+      ... on FlexibleContentFlexibleContentHtmlLayout {
+        fieldGroupName
+        bandClasses
+        bandId
+        html
+      }
+      ... on FlexibleContentFlexibleContentShortcodeLayout {
+        fieldGroupName
+        bandClasses
+        bandId
+        shortcode
+      }
     }
   }
 }
-

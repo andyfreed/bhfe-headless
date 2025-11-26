@@ -23,6 +23,7 @@ fragment CoursePageFields on FlmsCourse {
   courseMaterials {
     title
     file
+    status
   }
   # ACF Master Course List Fields
   masterCourseListFields {

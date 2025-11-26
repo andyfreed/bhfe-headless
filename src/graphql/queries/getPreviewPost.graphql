@@ -8,7 +8,7 @@ query GetPostPreview($id: ID!, $asPreview: Boolean = true) {
   post(id: $id, idType: DATABASE_ID, asPreview: $asPreview) {
     ...ContentNodeFields
     ...FeaturedImageFields
-    ...PostTaxonomyFields
+    ...PostCategoriesFields
     content
     excerpt
     author {
@@ -70,12 +70,12 @@ query GetContentNodePreview($id: ID!, $asPreview: Boolean = true) {
     ... on NodeWithFeaturedImage {
       featuredImage {
         node {
-          ...FeaturedImageNodeFields
+          ...MediaItemFields
         }
       }
     }
     ... on Post {
-      ...PostTaxonomyFields
+      ...PostCategoriesFields
       author {
         node {
           name
@@ -92,4 +92,3 @@ query GetContentNodePreview($id: ID!, $asPreview: Boolean = true) {
     }
   }
 }
-
