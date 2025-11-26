@@ -1,0 +1,41 @@
+# SEO fields - compatible with Yoast SEO or RankMath if installed
+# Note: Requires WPGraphQL Yoast SEO or similar plugin for full SEO data
+
+fragment SeoFields on NodeWithTitle {
+  # Basic SEO from title
+  title
+}
+
+# If using Yoast SEO with WPGraphQL Yoast
+# Uncomment this when plugin is installed:
+#
+# fragment YoastSeoFields on PostTypeSEO {
+#   title
+#   metaDesc
+#   canonical
+#   focuskw
+#   metaRobotsNoindex
+#   metaRobotsNofollow
+#   opengraphTitle
+#   opengraphDescription
+#   opengraphImage {
+#     sourceUrl
+#   }
+#   opengraphSiteName
+#   opengraphUrl
+#   opengraphType
+#   twitterTitle
+#   twitterDescription
+#   twitterImage {
+#     sourceUrl
+#   }
+# }
+
+# Basic meta fields that exist on most content types
+fragment BasicMetaFields on ContentNode {
+  uri
+  slug
+  date
+  modified
+}
+

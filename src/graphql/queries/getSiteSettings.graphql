@@ -1,0 +1,55 @@
+# Get general WordPress settings
+query GetSiteSettings {
+  generalSettings {
+    title
+    description
+    url
+    language
+    timezone
+    dateFormat
+    timeFormat
+  }
+}
+
+# Get reading settings (posts per page, front page)
+query GetReadingSettings {
+  readingSettings {
+    pageForPosts
+    pageOnFront
+    postsPerPage
+    showOnFront
+  }
+  allSettings {
+    readingSettingsPageForPosts
+    readingSettingsPageOnFront
+  }
+}
+
+# Combined site data for layout
+query GetSiteData {
+  generalSettings {
+    title
+    description
+    url
+  }
+  # Primary menu
+  primaryMenu: menuItems(where: { location: PRIMARY }, first: 20) {
+    nodes {
+      id
+      label
+      url
+      path
+      parentId
+    }
+  }
+  # Footer menu
+  footerMenu: menuItems(where: { location: FOOTER }, first: 20) {
+    nodes {
+      id
+      label
+      url
+      path
+    }
+  }
+}
+

@@ -1,0 +1,30 @@
+# Fragment for Contact Page Template ACF Fields
+# Use this fragment when querying pages with the Contact template
+
+fragment ContactPageFields on Page {
+  id
+  databaseId
+  title
+  uri
+  slug
+  content
+  template {
+    templateName
+  }
+  featuredImage {
+    node {
+      id
+      sourceUrl
+      altText
+    }
+  }
+  # ACF Contact Fields
+  acfContactFields {
+    address
+    phone
+    email
+    hours
+    mapEmbed
+  }
+}
+

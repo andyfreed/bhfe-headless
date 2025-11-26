@@ -1,0 +1,46 @@
+# Base fields for all content nodes (posts, pages, courses, etc.)
+fragment ContentNodeFields on ContentNode {
+  id
+  databaseId
+  uri
+  slug
+  status
+  date
+  modified
+  contentTypeName
+}
+
+# Extended content fields with author and content
+fragment ContentNodeWithContent on ContentNode {
+  ...ContentNodeFields
+  ... on NodeWithTitle {
+    title
+  }
+  ... on NodeWithContentEditor {
+    content
+  }
+  ... on NodeWithExcerpt {
+    excerpt
+  }
+  ... on NodeWithAuthor {
+    author {
+      node {
+        ...AuthorFields
+      }
+    }
+  }
+}
+
+# Author information
+fragment AuthorFields on User {
+  id
+  databaseId
+  name
+  firstName
+  lastName
+  avatar {
+    url
+  }
+  description
+}
+

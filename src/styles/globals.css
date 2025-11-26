@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom CSS Variables */
+:root {
+  --color-primary: #1e3a5f;
+  --color-secondary: #ffb300;
+  --color-accent: #2563eb;
+  --font-playfair: 'Playfair Display', serif;
+  --font-inter: 'Inter', sans-serif;
+}
+
+/* Base styles */
+body {
+  font-family: var(--font-inter);
+  color: #1f2937;
+}
+
+.font-playfair {
+  font-family: var(--font-playfair);
+}
+
+/* WordPress Content Styles */
+.wp-content {
+  @apply prose prose-slate max-w-none;
+}
+
+.wp-content h1 {
+  @apply font-playfair text-4xl font-bold mb-6;
+}
+
+.wp-content h2 {
+  @apply font-playfair text-3xl font-bold mb-4 mt-8;
+}
+
+.wp-content h3 {
+  @apply font-playfair text-2xl font-semibold mb-3 mt-6;
+}
+
+.wp-content p {
+  @apply mb-4 leading-relaxed;
+}
+
+.wp-content ul,
+.wp-content ol {
+  @apply mb-4 pl-6;
+}
+
+.wp-content li {
+  @apply mb-2;
+}
+
+.wp-content a {
+  @apply text-blue-600 hover:text-blue-800 underline;
+}
+
+.wp-content img {
+  @apply rounded-lg shadow-md my-6;
+}
+
+.wp-content blockquote {
+  @apply border-l-4 border-amber-500 pl-4 italic my-6 text-slate-600;
+}
+
+/* Button Styles */
+.btn-primary {
+  @apply bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold py-3 px-6 rounded-lg transition-colors;
+}
+
+.btn-secondary {
+  @apply bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 px-6 rounded-lg transition-colors;
+}
+
+.btn-outline {
+  @apply border-2 border-slate-800 hover:bg-slate-800 hover:text-white text-slate-800 font-bold py-3 px-6 rounded-lg transition-colors;
+}
+
+/* Card Styles */
+.card {
+  @apply bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow;
+}
+
+/* Course Badge */
+.credit-badge {
+  @apply bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded;
+}
+
+/* Line clamp utility */
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Loading skeleton */
+.skeleton {
+  @apply animate-pulse bg-slate-200 rounded;
+}
+

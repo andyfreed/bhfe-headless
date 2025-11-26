@@ -1,0 +1,71 @@
+#import "../fragments/ContentNodeFields.graphql"
+#import "../fragments/FeaturedImageFields.graphql"
+#import "../fragments/FlexibleContentFields.graphql"
+
+# Get all pages (for navigation, sitemap)
+query GetPages($first: Int = 100) {
+  pages(first: $first, where: { status: PUBLISH }) {
+    nodes {
+      ...ContentNodeFields
+      title
+      ...FeaturedImageFields
+      parent {
+        node {
+          ... on Page {
+            id
+            slug
+            uri
+            title
+          }
+        }
+      }
+      children {
+        nodes {
+          ... on Page {
+            id
+            slug
+            uri
+            title
+          }
+        }
+      }
+    }
+  }
+}
+
+# Get top-level pages (for main navigation)
+query GetTopLevelPages($first: Int = 20) {
+  pages(first: $first, where: { status: PUBLISH, parent: null }) {
+    nodes {
+      id
+      databaseId
+      title
+      uri
+      slug
+      menuOrder
+      children(first: 10) {
+        nodes {
+          ... on Page {
+            id
+            title
+            uri
+            slug
+            menuOrder
+          }
+        }
+      }
+    }
+  }
+}
+
+# Get all page URIs for static generation
+query GetAllPageUris($first: Int = 100) {
+  pages(first: $first, where: { status: PUBLISH }) {
+    nodes {
+      uri
+      slug
+      modified
+    }
+  }
+}
+

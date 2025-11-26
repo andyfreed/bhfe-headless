@@ -1,0 +1,79 @@
+# Get WordPress navigation menu by location
+query GetMenuByLocation($location: MenuLocationEnum!) {
+  menuItems(where: { location: $location }, first: 50) {
+    nodes {
+      id
+      databaseId
+      label
+      url
+      path
+      target
+      cssClasses
+      parentId
+      order
+      connectedNode {
+        node {
+          __typename
+          ... on Page {
+            uri
+            slug
+          }
+          ... on Post {
+            uri
+            slug
+          }
+          ... on Category {
+            uri
+            slug
+          }
+          ... on FlmsCourse {
+            uri
+            slug
+          }
+        }
+      }
+    }
+  }
+}
+
+# Get menu by slug/name
+query GetMenuByName($name: ID!) {
+  menu(id: $name, idType: NAME) {
+    id
+    name
+    slug
+    menuItems(first: 50) {
+      nodes {
+        id
+        label
+        url
+        path
+        target
+        cssClasses
+        parentId
+        order
+      }
+    }
+  }
+}
+
+# Get all menus
+query GetAllMenus {
+  menus {
+    nodes {
+      id
+      name
+      slug
+      locations
+      menuItems(first: 20) {
+        nodes {
+          id
+          label
+          url
+          path
+        }
+      }
+    }
+  }
+}
+

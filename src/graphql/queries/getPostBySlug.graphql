@@ -1,0 +1,60 @@
+#import "../fragments/ContentNodeFields.graphql"
+#import "../fragments/FeaturedImageFields.graphql"
+#import "../fragments/TaxonomyFields.graphql"
+
+# Get single post by slug
+query GetPostBySlug($slug: ID!) {
+  post(id: $slug, idType: SLUG) {
+    ...ContentNodeFields
+    title
+    content
+    excerpt
+    ...FeaturedImageFields
+    categories(first: 5) {
+      nodes {
+        id
+        name
+        slug
+      }
+    }
+    author {
+      node {
+        ...AuthorFields
+      }
+    }
+  }
+}
+
+# Get single post by database ID
+query GetPostById($id: ID!) {
+  post(id: $id, idType: DATABASE_ID) {
+    ...ContentNodeFields
+    title
+    content
+    excerpt
+    ...FeaturedImageFields
+    categories(first: 5) {
+      nodes {
+        id
+        name
+        slug
+      }
+    }
+    author {
+      node {
+        ...AuthorFields
+      }
+    }
+  }
+}
+
+# Get all post slugs for static generation
+query GetAllPostSlugs($first: Int = 100) {
+  posts(first: $first) {
+    nodes {
+      slug
+      uri
+      modified
+    }
+  }
+}

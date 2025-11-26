@@ -1,0 +1,67 @@
+# Fragment for Course Page Template
+# Full course fields for single course pages
+
+fragment CoursePageFields on FlmsCourse {
+  id
+  databaseId
+  title
+  uri
+  slug
+  date
+  modified
+  status
+  # Custom FLMS Fields
+  courseNumber
+  courseDescription
+  coursePreview
+  wooProductId
+  courseCredits {
+    type
+    name
+    credits
+  }
+  courseMaterials {
+    title
+    file
+  }
+  # ACF Master Course List Fields
+  masterCourseListFields {
+    fieldGroupName
+    iarApprovalDate
+    notes
+  }
+  # Featured Image
+  featuredImage {
+    node {
+      id
+      sourceUrl
+      altText
+      mediaDetails {
+        width
+        height
+      }
+    }
+  }
+}
+
+# Lightweight fragment for course listings/cards
+fragment CourseCardFields on FlmsCourse {
+  id
+  databaseId
+  title
+  uri
+  slug
+  courseNumber
+  courseDescription
+  courseCredits {
+    name
+    credits
+  }
+  featuredImage {
+    node {
+      sourceUrl
+      altText
+    }
+  }
+}
+

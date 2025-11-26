@@ -1,0 +1,79 @@
+#import "../fragments/ContentNodeFields.graphql"
+#import "../fragments/FeaturedImageFields.graphql"
+#import "../fragments/TaxonomyFields.graphql"
+
+# Get paginated list of posts
+query GetPosts($first: Int = 10, $after: String) {
+  posts(first: $first, after: $after) {
+    nodes {
+      ...ContentNodeFields
+      title
+      excerpt
+      content
+      ...FeaturedImageFields
+      categories(first: 5) {
+        nodes {
+          id
+          name
+          slug
+        }
+      }
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+  }
+}
+
+# Get posts by category
+query GetPostsByCategory(
+  $categorySlug: String!
+  $first: Int = 10
+  $after: String
+) {
+  posts(
+    first: $first
+    after: $after
+    where: { categoryName: $categorySlug }
+  ) {
+    nodes {
+      ...ContentNodeFields
+      title
+      excerpt
+      ...FeaturedImageFields
+      categories(first: 5) {
+        nodes {
+          id
+          name
+          slug
+        }
+      }
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}
+
+# Get recent posts for sidebar/widget
+query GetRecentPosts($count: Int = 5) {
+  posts(first: $count) {
+    nodes {
+      id
+      databaseId
+      title
+      uri
+      date
+      featuredImage {
+        node {
+          sourceUrl
+          altText
+        }
+      }
+    }
+  }
+}

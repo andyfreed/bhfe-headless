@@ -1,0 +1,130 @@
+# Fragment for Landing Page Template ACF Fields
+# Use this fragment when querying pages with the Landing template
+
+fragment LandingPageFields on Page {
+  id
+  databaseId
+  title
+  uri
+  slug
+  content
+  template {
+    templateName
+  }
+  featuredImage {
+    node {
+      id
+      sourceUrl
+      altText
+      mediaDetails {
+        width
+        height
+      }
+    }
+  }
+  # ACF Flexible Content for Landing Pages
+  acfPageFields {
+    flexibleContent {
+      __typename
+      ... on FlexibleContentFlexibleContentHeroLayout {
+        fieldGroupName
+        bandClasses
+        bandId
+        animation
+        animationSpeed
+        anchorPlacement
+        backgroundImage {
+          node {
+            sourceUrl
+            altText
+          }
+        }
+        heading
+        subheading
+        buttons {
+          button {
+            url
+            title
+            target
+          }
+        }
+      }
+      ... on FlexibleContentFlexibleContentHeadingLayout {
+        fieldGroupName
+        bandClasses
+        bandId
+        animation
+        animationSpeed
+        anchorPlacement
+        heading
+        textAlignment
+        containerAlignment
+        headingLinksTo {
+          url
+          title
+          target
+        }
+      }
+      ... on FlexibleContentFlexibleContentCtaButtonsLayout {
+        fieldGroupName
+        bandClasses
+        bandId
+        animation
+        animationSpeed
+        anchorPlacement
+        content
+        buttons {
+          button {
+            url
+            title
+            target
+          }
+        }
+      }
+      ... on FlexibleContentFlexibleContentImageModuleLayout {
+        fieldGroupName
+        bandClasses
+        bandId
+        animation
+        animationSpeed
+        anchorPlacement
+        image {
+          node {
+            sourceUrl
+            altText
+          }
+        }
+        caption
+        imageSize
+        link {
+          url
+          title
+          target
+        }
+      }
+      ... on FlexibleContentFlexibleContentWysiwygLayout {
+        fieldGroupName
+        bandClasses
+        bandId
+        animation
+        animationSpeed
+        anchorPlacement
+        content
+      }
+      ... on FlexibleContentFlexibleContentAccordionLayout {
+        fieldGroupName
+        bandClasses
+        bandId
+        animation
+        animationSpeed
+        anchorPlacement
+        accordionItems {
+          heading
+          content
+          defaultState
+        }
+      }
+    }
+  }
+}
+

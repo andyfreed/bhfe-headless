@@ -1,0 +1,49 @@
+#import "../fragments/ContentNodeFields.graphql"
+#import "../fragments/FeaturedImageFields.graphql"
+
+# Get single page by URI
+query GetPageByUri($uri: ID!) {
+  page(id: $uri, idType: URI) {
+    ...ContentNodeFields
+    title
+    content
+    ...FeaturedImageFields
+    parent {
+      node {
+        ... on Page {
+          id
+          title
+          uri
+        }
+      }
+    }
+    children {
+      nodes {
+        ... on Page {
+          id
+          title
+          uri
+        }
+      }
+    }
+  }
+}
+
+# Get single page by database ID
+query GetPageById($id: ID!) {
+  page(id: $id, idType: DATABASE_ID) {
+    ...ContentNodeFields
+    title
+    content
+    ...FeaturedImageFields
+  }
+}
+
+# Get front page with settings
+query GetFrontPageWithSettings {
+  generalSettings {
+    title
+    description
+    url
+  }
+}

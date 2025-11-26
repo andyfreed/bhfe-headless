@@ -1,0 +1,62 @@
+# FLMS Course base fields
+fragment CourseFields on FlmsCourse {
+  id
+  databaseId
+  title
+  uri
+  slug
+  date
+  modified
+  courseNumber
+  courseDescription
+  coursePreview
+  wooProductId
+}
+
+# Course credits information
+fragment CourseCreditFields on FlmsCourse {
+  courseCredits {
+    type
+    name
+    credits
+  }
+}
+
+# Course materials/downloads
+fragment CourseMaterialFields on FlmsCourse {
+  courseMaterials {
+    title
+    file
+  }
+}
+
+# Course ACF fields
+fragment CourseAcfFields on FlmsCourse {
+  masterCourseListFields {
+    fieldGroupName
+    iarApprovalDate
+    notes
+  }
+}
+
+# Full course with all fields
+fragment CourseFullFields on FlmsCourse {
+  ...CourseFields
+  ...CourseCreditFields
+  ...CourseMaterialFields
+  ...CourseAcfFields
+}
+
+# Course card for listings
+fragment CourseCardFields on FlmsCourse {
+  id
+  databaseId
+  title
+  uri
+  courseNumber
+  courseCredits {
+    name
+    credits
+  }
+}
+

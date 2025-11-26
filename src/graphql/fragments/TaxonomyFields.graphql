@@ -1,0 +1,51 @@
+# Category fields
+fragment CategoryFields on Category {
+  id
+  databaseId
+  name
+  slug
+  uri
+  description
+  count
+  parent {
+    node {
+      id
+      name
+      slug
+    }
+  }
+}
+
+# Tag fields
+fragment TagFields on Tag {
+  id
+  databaseId
+  name
+  slug
+  uri
+  count
+}
+
+# Generic term fields for custom taxonomies
+fragment TermFields on TermNode {
+  id
+  databaseId
+  name
+  slug
+  uri
+  description
+  count
+  taxonomyName
+}
+
+# Post categories connection
+fragment PostCategoriesFields on Post {
+  categories(first: 10) {
+    nodes {
+      ...CategoryFields
+    }
+  }
+}
+
+# Post tags - removed as tags field may not exist on all WP installs
+# Add back when tag support is confirmed in schema

@@ -1,0 +1,74 @@
+#import "../fragments/ContentNodeFields.graphql"
+#import "../fragments/FeaturedImageFields.graphql"
+#import "../fragments/TaxonomyFields.graphql"
+#import "../fragments/CourseFields.graphql"
+
+# Generic content resolver by URI
+# This is the main query for dynamic routing - resolves any content type
+query GetContentByUri($uri: String!) {
+  nodeByUri(uri: $uri) {
+    __typename
+    id
+    uri
+    
+    # Page content
+    ... on Page {
+      ...ContentNodeFields
+      title
+      content
+      ...FeaturedImageFields
+    }
+    
+    # Post content
+    ... on Post {
+      ...ContentNodeFields
+      title
+      content
+      excerpt
+      ...FeaturedImageFields
+      categories(first: 5) {
+        nodes {
+          id
+          name
+          slug
+        }
+      }
+      author {
+        node {
+          ...AuthorFields
+        }
+      }
+    }
+    
+    # FLMS Course content
+    ... on FlmsCourse {
+      ...CourseFullFields
+    }
+    
+    # Category archive
+    ... on Category {
+      ...CategoryFields
+    }
+    
+    # Tag archive
+    ... on Tag {
+      ...TagFields
+    }
+  }
+}
+
+# Lightweight content type check (for routing decisions)
+query GetContentTypeByUri($uri: String!) {
+  nodeByUri(uri: $uri) {
+    __typename
+    id
+    uri
+    ... on ContentNode {
+      contentTypeName
+      status
+    }
+    ... on TermNode {
+      taxonomyName
+    }
+  }
+}

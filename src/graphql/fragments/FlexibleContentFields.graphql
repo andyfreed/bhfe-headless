@@ -1,0 +1,53 @@
+# ACF Flexible Content layout fields
+# These fragments handle the page builder layouts
+# Note: Field names are based on your actual ACF configuration
+
+fragment FlexibleContentFields on Page {
+  flexibleContent {
+    flexibleContent {
+      __typename
+      ... on FlexibleContentFlexibleContentHeroLayout {
+        ...HeroLayoutFields
+      }
+      ... on FlexibleContentFlexibleContentHeadingLayout {
+        ...HeadingLayoutFields
+      }
+      ... on FlexibleContentFlexibleContentWysiwygLayout {
+        ...WysiwygLayoutFields
+      }
+    }
+  }
+}
+
+# Hero section layout
+fragment HeroLayoutFields on FlexibleContentFlexibleContentHeroLayout {
+  heading
+  subheading
+  backgroundImage {
+    node {
+      sourceUrl
+      altText
+    }
+  }
+  bandId
+  bandClasses
+  colorScheme
+}
+
+# Heading layout
+fragment HeadingLayoutFields on FlexibleContentFlexibleContentHeadingLayout {
+  heading
+  bandId
+  bandClasses
+  colorScheme
+  textAlignment
+}
+
+# WYSIWYG/rich text layout
+fragment WysiwygLayoutFields on FlexibleContentFlexibleContentWysiwygLayout {
+  content
+  bandId
+  bandClasses
+  colorScheme
+  textAlignment
+}

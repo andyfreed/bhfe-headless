@@ -1,0 +1,95 @@
+#import "../fragments/ContentNodeFields.graphql"
+#import "../fragments/FeaturedImageFields.graphql"
+#import "../fragments/TaxonomyFields.graphql"
+#import "../fragments/CourseFields.graphql"
+
+# Get a post preview by database ID
+query GetPostPreview($id: ID!, $asPreview: Boolean = true) {
+  post(id: $id, idType: DATABASE_ID, asPreview: $asPreview) {
+    ...ContentNodeFields
+    ...FeaturedImageFields
+    ...PostTaxonomyFields
+    content
+    excerpt
+    author {
+      node {
+        name
+        avatar {
+          url
+        }
+      }
+    }
+  }
+}
+
+# Get a page preview by database ID
+query GetPagePreview($id: ID!, $asPreview: Boolean = true) {
+  page(id: $id, idType: DATABASE_ID, asPreview: $asPreview) {
+    ...ContentNodeFields
+    ...FeaturedImageFields
+    content
+    template {
+      templateName
+    }
+    parent {
+      node {
+        ... on Page {
+          title
+          uri
+        }
+      }
+    }
+  }
+}
+
+# Get a course preview by database ID
+query GetCoursePreview($id: ID!, $asPreview: Boolean = true) {
+  flmsCourse(id: $id, idType: DATABASE_ID, asPreview: $asPreview) {
+    ...ContentNodeFields
+    ...FeaturedImageFields
+    ...CourseFullFields
+  }
+}
+
+# Get any content node preview by database ID
+query GetContentNodePreview($id: ID!, $asPreview: Boolean = true) {
+  contentNode(id: $id, idType: DATABASE_ID, asPreview: $asPreview) {
+    __typename
+    id
+    databaseId
+    uri
+    ... on NodeWithTitle {
+      title
+    }
+    ... on NodeWithContentEditor {
+      content
+    }
+    ... on NodeWithExcerpt {
+      excerpt
+    }
+    ... on NodeWithFeaturedImage {
+      featuredImage {
+        node {
+          ...FeaturedImageNodeFields
+        }
+      }
+    }
+    ... on Post {
+      ...PostTaxonomyFields
+      author {
+        node {
+          name
+        }
+      }
+    }
+    ... on Page {
+      template {
+        templateName
+      }
+    }
+    ... on FlmsCourse {
+      ...CourseFullFields
+    }
+  }
+}
+

@@ -1,0 +1,42 @@
+# Featured image / thumbnail fields
+fragment FeaturedImageFields on NodeWithFeaturedImage {
+  featuredImage {
+    node {
+      ...MediaItemFields
+    }
+  }
+}
+
+# Full media item fields
+fragment MediaItemFields on MediaItem {
+  id
+  databaseId
+  sourceUrl
+  altText
+  caption
+  title
+  mediaDetails {
+    width
+    height
+    sizes {
+      name
+      width
+      height
+      sourceUrl
+    }
+  }
+}
+
+# Responsive image with srcSet
+fragment ResponsiveImageFields on MediaItem {
+  id
+  sourceUrl
+  altText
+  srcSet
+  sizes
+  mediaDetails {
+    width
+    height
+  }
+}
+

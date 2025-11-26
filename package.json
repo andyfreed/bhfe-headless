@@ -1,0 +1,45 @@
+{
+  "name": "bhfe-headless",
+  "version": "1.0.0",
+  "description": "Beacon Hill Financial Educators - Headless Frontend",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "generate": "faust generatePossibleTypes",
+    "codegen": "graphql-codegen --config codegen.ts",
+    "codegen:watch": "graphql-codegen --config codegen.ts --watch"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.8.10",
+    "@faustwp/blocks": "^3.0.0",
+    "@faustwp/cli": "^3.0.0",
+    "@faustwp/core": "^3.0.0",
+    "@tailwindcss/typography": "^0.5.19",
+    "graphql": "^16.8.1",
+    "next": "^14.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@graphql-codegen/cli": "^5.0.7",
+    "@graphql-codegen/near-operation-file-preset": "^3.1.0",
+    "@graphql-codegen/typescript": "^4.1.6",
+    "@graphql-codegen/typescript-graphql-request": "^6.3.0",
+    "@graphql-codegen/typescript-operations": "^4.6.1",
+    "@parcel/watcher": "^2.5.1",
+    "@types/node": "^20.11.0",
+    "@types/react": "^18.2.48",
+    "@types/react-dom": "^18.2.18",
+    "autoprefixer": "^10.4.17",
+    "dotenv": "^17.2.3",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "^14.1.0",
+    "postcss": "^8.4.33",
+    "prettier": "^3.6.2",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.3.3"
+  }
+}

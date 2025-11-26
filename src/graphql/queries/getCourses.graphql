@@ -1,0 +1,65 @@
+#import "../fragments/CourseFields.graphql"
+
+# Get all courses with pagination
+query GetCourses($first: Int = 50, $after: String) {
+  flmsCourses(first: $first, after: $after) {
+    nodes {
+      ...CourseFullFields
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+  }
+}
+
+# Get courses for listing (lighter query)
+query GetCourseCards($first: Int = 50, $after: String) {
+  flmsCourses(first: $first, after: $after) {
+    nodes {
+      ...CourseCardFields
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}
+
+# Get single course by slug
+query GetCourseBySlug($slug: ID!) {
+  flmsCourse(id: $slug, idType: SLUG) {
+    ...CourseFullFields
+  }
+}
+
+# Get single course by database ID
+query GetCourseById($id: ID!) {
+  flmsCourse(id: $id, idType: DATABASE_ID) {
+    ...CourseFullFields
+  }
+}
+
+# Get all course URIs for static generation
+query GetAllCourseSlugs($first: Int = 200) {
+  flmsCourses(first: $first) {
+    nodes {
+      uri
+      slug
+      databaseId
+      modified
+    }
+  }
+}
+
+# Get featured courses for homepage
+query GetFeaturedCoursesHomepage($first: Int = 6) {
+  flmsCourses(first: $first) {
+    nodes {
+      ...CourseCardFields
+      courseDescription
+    }
+  }
+}
