@@ -17,7 +17,7 @@ export default async function HomePage() {
     : null;
 
   return (
-    <main className="min-h-screen">
+    <div className="min-h-screen">
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-white py-24 px-6">
         <div className="max-w-6xl mx-auto text-center">
@@ -136,19 +136,7 @@ export default async function HomePage() {
           </Link>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-slate-900 text-slate-300 py-12 px-6">
-        <div className="max-w-6xl mx-auto text-center">
-          <p className="font-playfair text-2xl text-white mb-4">
-            Beacon Hill Financial Educators
-          </p>
-          <p className="text-sm">
-            © {new Date().getFullYear()} BHFE. All rights reserved.
-          </p>
-        </div>
-      </footer>
-    </main>
+    </div>
   );
 }
 

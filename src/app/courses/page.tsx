@@ -1,12 +1,12 @@
 /**
  * Courses Archive Page
  * 
- * Displays all available FLMS courses
+ * Displays all available FLMS courses with search and filters.
  */
 
 import { Metadata } from 'next';
-import Link from 'next/link';
 import { getAllCourses, hasData, extractNodes } from '@/lib/wp';
+import { CourseFilters } from '@/components/CourseFilters';
 
 export const revalidate = 60;
 
@@ -16,12 +16,12 @@ export const metadata: Metadata = {
 };
 
 export default async function CoursesArchivePage() {
-  const result = await getAllCourses({ first: 50 });
+  const result = await getAllCourses({ first: 100 });
   const courses = hasData(result) ? extractNodes(result.data.flmsCourses) : [];
-  const pageInfo = result.data?.flmsCourses?.pageInfo;
+  const error = result.error;
 
   return (
-    <main className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50">
       {/* Header */}
       <header className="bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-white py-16 px-6">
         <div className="max-w-6xl mx-auto">
@@ -35,101 +35,62 @@ export default async function CoursesArchivePage() {
         </div>
       </header>
 
-      {/* Courses Grid */}
+      {/* Courses Section */}
       <section className="py-12 px-6">
         <div className="max-w-6xl mx-auto">
-          {courses.length > 0 ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {courses.map((course) => (
-                <article
-                  key={course.id}
-                  className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
-                >
-                  <div className="p-6">
-                    {/* Course Number */}
-                    {course.courseNumber && (
-                      <span className="inline-block bg-amber-100 text-amber-800 font-mono text-sm font-bold px-2 py-1 rounded mb-3">
-                        #{course.courseNumber}
-                      </span>
-                    )}
-
-                    {/* Title */}
-                    <h2 className="font-playfair text-xl font-bold text-slate-800 mb-3">
-                      <Link
-                        href={course.uri || `/courses/${course.slug}`}
-                        className="hover:text-blue-700 transition-colors"
-                      >
-                        {course.title}
-                      </Link>
-                    </h2>
-
-                    {/* Credits */}
-                    {course.courseCredits && course.courseCredits.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {course.courseCredits
-                          .filter(Boolean)
-                          .slice(0, 4)
-                          .map((credit, idx) => (
-                            <span
-                              key={idx}
-                              className="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-1 rounded"
-                            >
-                              {credit?.credits} {credit?.name}
-                            </span>
-                          ))}
-                      </div>
-                    )}
-
-                    {/* Description Preview */}
-                    {course.courseDescription && (
-                      <p className="text-slate-600 text-sm line-clamp-3 mb-4">
-                        {course.courseDescription
-                          .replace(/<[^>]*>/g, '')
-                          .substring(0, 150)}
-                        ...
-                      </p>
-                    )}
-
-                    {/* View Link */}
-                    <Link
-                      href={course.uri || `/courses/${course.slug}`}
-                      className="inline-flex items-center gap-2 text-sm font-semibold text-amber-600 hover:text-amber-700"
-                    >
-                      View Course
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
-                    </Link>
-                  </div>
-                </article>
-              ))}
+          {error ? (
+            <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
+              <svg
+                className="w-12 h-12 mx-auto text-red-400 mb-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+              <h2 className="text-xl font-bold text-red-800 mb-2">
+                Unable to load courses
+              </h2>
+              <p className="text-red-600 mb-4">
+                There was a problem connecting to the course database.
+              </p>
+              <details className="text-left max-w-lg mx-auto">
+                <summary className="text-red-500 cursor-pointer text-sm">
+                  Technical details
+                </summary>
+                <pre className="mt-2 text-xs bg-red-100 p-3 rounded overflow-auto">
+                  {error.message}
+                </pre>
+              </details>
             </div>
+          ) : courses.length > 0 ? (
+            <CourseFilters courses={courses} />
           ) : (
             <div className="text-center py-12 bg-white rounded-xl shadow">
-              <p className="text-slate-500">No courses found.</p>
-            </div>
-          )}
-
-          {/* Pagination placeholder */}
-          {pageInfo?.hasNextPage && (
-            <div className="text-center mt-12">
-              <button className="bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors">
-                Load More Courses
-              </button>
+              <svg
+                className="w-16 h-16 mx-auto text-slate-300 mb-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                />
+              </svg>
+              <p className="text-slate-500 text-lg">No courses available yet.</p>
+              <p className="text-slate-400 mt-2">Check back soon for new courses!</p>
             </div>
           )}
         </div>
       </section>
-    </main>
+    </div>
   );
 }

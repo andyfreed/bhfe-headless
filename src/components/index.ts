@@ -13,3 +13,10 @@ export { PreviewBanner, PreviewWrapper } from './PreviewBanner';
 // Staging indicator
 export { StagingBadge, StagingBanner } from './StagingBadge';
 
+// Layout components
+export { Header } from './Header';
+export { Footer } from './Footer';
+
+// Course components
+export { CourseFilters } from './CourseFilters';
+

@@ -25,24 +25,22 @@ import {
  * =====================================================
  * 
  * This repository is STAGING ONLY.
- * Endpoints are hard-coded to the staging WordPress instance.
+ * Uses environment variable for WordPress URL to support both
+ * local development and Vercel deployment.
  * 
  * DO NOT modify these values for production use.
  * Create a separate repository for production deployments.
  * =====================================================
  */
 
-// STAGING: Hard-coded staging WordPress URL
-const WORDPRESS_URL = 'http://beacon-hill-staging.local';
+// STAGING: WordPress URL from environment (required for Vercel)
+// Fallback to local URL for development
+const WORDPRESS_URL = process.env.NEXT_PUBLIC_WORDPRESS_URL || 'http://beacon-hill-staging.local';
 const GRAPHQL_ENDPOINT = `${WORDPRESS_URL}/graphql`;
 
-// Validate we're not accidentally using production values
-if (process.env.NEXT_PUBLIC_WORDPRESS_URL && 
-    !process.env.NEXT_PUBLIC_WORDPRESS_URL.includes('staging')) {
-  console.warn(
-    '⚠️ WARNING: NEXT_PUBLIC_WORDPRESS_URL does not contain "staging".',
-    'This repo is staging-only. Ignoring env variable and using hard-coded staging URL.'
-  );
+// Log the endpoint being used (helpful for debugging)
+if (typeof window === 'undefined') {
+  console.log(`[GraphQL] Using endpoint: ${GRAPHQL_ENDPOINT}`);
 }
 
 /**
