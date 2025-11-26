@@ -3,6 +3,9 @@
  * 
  * Typed GraphQL client for server-side data fetching.
  * Uses Apollo Client under the hood with proper caching strategies.
+ * 
+ * ⚠️ STAGING ONLY - This repo is configured exclusively for staging.
+ * Do NOT use this codebase for production deployments.
  */
 
 import {
@@ -16,9 +19,31 @@ import {
   type NormalizedCacheObject,
 } from '@apollo/client';
 
-// Environment configuration
-const WORDPRESS_URL = process.env.NEXT_PUBLIC_WORDPRESS_URL || 'http://beacon-hill-staging.local';
+/**
+ * =====================================================
+ * STAGING ENVIRONMENT CONFIGURATION
+ * =====================================================
+ * 
+ * This repository is STAGING ONLY.
+ * Endpoints are hard-coded to the staging WordPress instance.
+ * 
+ * DO NOT modify these values for production use.
+ * Create a separate repository for production deployments.
+ * =====================================================
+ */
+
+// STAGING: Hard-coded staging WordPress URL
+const WORDPRESS_URL = 'http://beacon-hill-staging.local';
 const GRAPHQL_ENDPOINT = `${WORDPRESS_URL}/graphql`;
+
+// Validate we're not accidentally using production values
+if (process.env.NEXT_PUBLIC_WORDPRESS_URL && 
+    !process.env.NEXT_PUBLIC_WORDPRESS_URL.includes('staging')) {
+  console.warn(
+    '⚠️ WARNING: NEXT_PUBLIC_WORDPRESS_URL does not contain "staging".',
+    'This repo is staging-only. Ignoring env variable and using hard-coded staging URL.'
+  );
+}
 
 /**
  * Cache configuration for Apollo Client

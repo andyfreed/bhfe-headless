@@ -1,0 +1,4 @@
+# STAGING ENVIRONMENT - No crawling allowed
+User-agent: *
+Disallow: /
+

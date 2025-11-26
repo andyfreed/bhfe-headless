@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Playfair_Display, Inter } from 'next/font/google';
 import '@/styles/globals.css';
+import { StagingBadge } from '@/components/StagingBadge';
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -14,13 +15,35 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
+/**
+ * STAGING ENVIRONMENT METADATA
+ * 
+ * This is a staging-only deployment. All pages are set to noindex/nofollow.
+ */
 export const metadata: Metadata = {
   title: {
-    default: 'Beacon Hill Financial Educators',
-    template: '%s | BHFE',
+    default: '[STAGING] Beacon Hill Financial Educators',
+    template: '[STAGING] %s | BHFE',
   },
-  description: 'Professional continuing education courses for financial professionals',
+  description: 'STAGING - Professional continuing education courses for financial professionals',
   keywords: ['CPE', 'CFP', 'continuing education', 'financial education', 'tax courses'],
+  
+  // STAGING: Prevent all search engine indexing
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+    googleBot: {
+      index: false,
+      follow: false,
+      noimageindex: true,
+    },
+  },
+  
+  // Additional meta tags for staging
+  other: {
+    'X-Robots-Tag': 'noindex, nofollow, noarchive',
+  },
 };
 
 export default function RootLayout({
@@ -30,10 +53,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable}`}>
+      <head>
+        {/* STAGING: Explicit noindex meta tag */}
+        <meta name="robots" content="noindex, nofollow, noarchive" />
+        <meta name="googlebot" content="noindex, nofollow, noarchive" />
+      </head>
       <body className="antialiased">
+        {/* STAGING: Visible staging indicator */}
+        <StagingBadge />
+        
         {children}
       </body>
     </html>
   );
 }
-
