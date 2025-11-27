@@ -34,9 +34,15 @@ export async function generateStaticParams() {
   const params: { uri: string[] }[] = [];
 
   // Add pages
+  // Exclude auth routes from static generation - these have specific route handlers
+  const excludedAuthRoutes = ['/login/', '/register/', '/forgot-password/'];
   if (hasData(pagesResult) && pagesResult.data.pages?.nodes) {
     pagesResult.data.pages.nodes.forEach((page) => {
       if (page.uri && page.uri !== '/') {
+        // Skip auth routes - they have dedicated Next.js pages
+        if (excludedAuthRoutes.includes(page.uri)) {
+          return;
+        }
         // Convert /about/team/ to ['about', 'team']
         const uriSegments = page.uri
           .split('/')
@@ -122,8 +128,10 @@ export default async function CatchAllPage({ params }: PageProps) {
   const uriPath = '/' + uri.join('/');
   
   // Exclude auth routes - these should be handled by specific routes
-  const authRoutes = ['/login', '/register', '/forgot-password'];
-  if (authRoutes.includes(uriPath)) {
+  // Handle both with and without trailing slashes
+  const authRoutes = ['/login', '/login/', '/register', '/register/', '/forgot-password', '/forgot-password/'];
+  const normalizedPath = uriPath.endsWith('/') ? uriPath : uriPath + '/';
+  if (authRoutes.includes(uriPath) || authRoutes.includes(normalizedPath)) {
     notFound();
   }
   
