@@ -121,6 +121,12 @@ export default async function CatchAllPage({ params }: PageProps) {
   const { uri } = await params;
   const uriPath = '/' + uri.join('/');
   
+  // Exclude auth routes - these should be handled by specific routes
+  const authRoutes = ['/login', '/register', '/forgot-password'];
+  if (authRoutes.includes(uriPath)) {
+    notFound();
+  }
+  
   const result = await getContentNodeByUri(uriPath);
 
   if (!hasData(result) || !result.data.nodeByUri) {
