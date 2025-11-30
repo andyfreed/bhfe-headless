@@ -11,6 +11,27 @@ import { getAllPosts, getSiteData, extractNodes, hasData } from '@/lib/wp';
 
 export const revalidate = 60;
 
+// Type for blog post from GraphQL
+interface BlogPost {
+  id: string;
+  slug?: string | null;
+  title?: string | null;
+  excerpt?: string | null;
+  date?: string | null;
+  featuredImage?: {
+    node?: {
+      sourceUrl?: string | null;
+      altText?: string | null;
+    } | null;
+  } | null;
+  categories?: {
+    nodes?: Array<{
+      id: string;
+      name?: string | null;
+    }> | null;
+  } | null;
+}
+
 export const metadata: Metadata = {
   title: 'Blog',
   description: 'Latest articles and insights from Beacon Hill Financial Educators',
@@ -22,7 +43,7 @@ export default async function BlogArchivePage() {
     getSiteData(),
   ]);
 
-  const posts = hasData(postsResult) ? extractNodes(postsResult.data.posts) : [];
+  const posts = (hasData(postsResult) ? extractNodes(postsResult.data.posts) : []) as BlogPost[];
   const pageInfo = postsResult.data?.posts?.pageInfo;
 
   return (
@@ -128,4 +149,3 @@ export default async function BlogArchivePage() {
     </main>
   );
 }
-
