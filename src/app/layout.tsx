@@ -1,7 +1,10 @@
 import type { Metadata } from 'next';
 import { Playfair_Display, Inter } from 'next/font/google';
 import '@/styles/globals.css';
-import { ConditionalLayout } from '@/components/ConditionalLayout';
+import { StagingBadge } from '@/components/StagingBadge';
+import { Header } from '@/components/Header';
+import { Footer } from '@/components/Footer';
+import { SessionProvider } from '@/components/SessionProvider';
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -59,10 +62,21 @@ export default function RootLayout({
         <meta name="googlebot" content="noindex, nofollow, noarchive" />
       </head>
       <body className="antialiased flex flex-col min-h-screen">
-        {/* Conditional Layout - excludes Header/Footer for auth pages */}
-        <ConditionalLayout>
-          {children}
-        </ConditionalLayout>
+        <SessionProvider>
+          {/* STAGING: Visible staging indicator */}
+          <StagingBadge />
+          
+          {/* Site Header */}
+          <Header />
+          
+          {/* Main Content */}
+          <main className="flex-grow">
+            {children}
+          </main>
+          
+          {/* Site Footer */}
+          <Footer />
+        </SessionProvider>
       </body>
     </html>
   );
