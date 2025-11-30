@@ -37,7 +37,7 @@ const navigation = {
     { label: 'Support', href: '/support/' },
   ],
   utility: [
-    { label: 'Log In', href: '/my-account/', icon: 'user' },
+    { label: 'Log In', href: '/login/', icon: 'user' },
     { label: 'Cart', href: '/cart/', icon: 'cart' },
     { label: 'Search', href: '#', icon: 'search', isSearch: true },
   ],
@@ -249,7 +249,7 @@ export function Header() {
               <div className="hidden md:flex items-center gap-1">
                 {/* Log In */}
                 <Link
-                  href="/my-account/"
+                  href="/login/"
                   className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-700 hover:text-amber-600 transition-colors rounded-lg hover:bg-slate-50"
                 >
                   <UserIcon className="w-5 h-5" />
@@ -373,7 +373,7 @@ export function Header() {
 
               {/* Utility links - mobile */}
               <Link
-                href="/my-account/"
+                href="/login/"
                 className="flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-slate-50 rounded-lg"
                 onClick={() => setMobileMenuOpen(false)}
               >
