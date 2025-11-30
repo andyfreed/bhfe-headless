@@ -33,20 +33,19 @@ export async function generateStaticParams() {
 
   const params: { uri: string[] }[] = [];
 
-  // Add pages
-  // Exclude auth routes from static generation - these have specific route handlers
+  // Add pages (excluding auth routes which have dedicated Next.js pages)
   const excludedAuthRoutes = ['/login/', '/register/', '/forgot-password/'];
   if (hasData(pagesResult) && pagesResult.data.pages?.nodes) {
-    pagesResult.data.pages.nodes.forEach((page) => {
+    pagesResult.data.pages.nodes.forEach((page: { uri?: string | null }) => {
       if (page.uri && page.uri !== '/') {
-        // Skip auth routes - they have dedicated Next.js pages
+        // Skip auth routes
         if (excludedAuthRoutes.includes(page.uri)) {
           return;
         }
         // Convert /about/team/ to ['about', 'team']
         const uriSegments = page.uri
           .split('/')
-          .filter((segment) => segment.length > 0);
+          .filter((segment: string) => segment.length > 0);
         if (uriSegments.length > 0) {
           params.push({ uri: uriSegments });
         }
@@ -56,11 +55,11 @@ export async function generateStaticParams() {
 
   // Add courses
   if (hasData(coursesResult) && coursesResult.data.flmsCourses?.nodes) {
-    coursesResult.data.flmsCourses.nodes.forEach((course) => {
+    coursesResult.data.flmsCourses.nodes.forEach((course: { uri?: string | null; slug?: string | null }) => {
       if (course.uri) {
         const uriSegments = course.uri
           .split('/')
-          .filter((segment) => segment.length > 0);
+          .filter((segment: string) => segment.length > 0);
         if (uriSegments.length > 0) {
           params.push({ uri: uriSegments });
         }
@@ -127,14 +126,6 @@ export default async function CatchAllPage({ params }: PageProps) {
   const { uri } = await params;
   const uriPath = '/' + uri.join('/');
   
-  // Exclude auth routes - these should be handled by specific routes
-  // Handle both with and without trailing slashes
-  const authRoutes = ['/login', '/login/', '/register', '/register/', '/forgot-password', '/forgot-password/'];
-  const normalizedPath = uriPath.endsWith('/') ? uriPath : uriPath + '/';
-  if (authRoutes.includes(uriPath) || authRoutes.includes(normalizedPath)) {
-    notFound();
-  }
-  
   const result = await getContentNodeByUri(uriPath);
 
   if (!hasData(result) || !result.data.nodeByUri) {
@@ -149,4 +140,3 @@ export default async function CatchAllPage({ params }: PageProps) {
 
   return <Template data={node} />;
 }
-
