@@ -109,15 +109,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // First time jwt callback is called, user object is available
       if (user) {
         token.id = user.id;
-        token.accessToken = user.accessToken;
+        token.accessToken = (user as any).accessToken;
       }
       return token;
     },
     async session({ session, token }) {
       // Send properties to the client
       if (session.user) {
-        session.user.id = token.id as string;
-        session.accessToken = token.accessToken as string;
+        (session.user as any).id = token.id as string;
+        (session as any).accessToken = token.accessToken as string;
       }
       return session;
     },
@@ -129,7 +129,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   secret: process.env.NEXTAUTH_SECRET || process.env.FAUST_SECRET_KEY,
 });
 
-// Extend the Session type
+// Extend the Session type for TypeScript
 declare module 'next-auth' {
   interface Session {
     accessToken?: string;
@@ -141,13 +141,6 @@ declare module 'next-auth' {
   }
 
   interface User {
-    accessToken?: string;
-  }
-}
-
-declare module 'next-auth/jwt' {
-  interface JWT {
-    id?: string;
     accessToken?: string;
   }
 }
