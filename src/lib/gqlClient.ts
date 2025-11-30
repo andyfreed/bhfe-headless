@@ -1,84 +1,25 @@
 /**
- * GraphQL Client
+ * GraphQL Client for WordPress
  * 
- * Typed GraphQL client for server-side data fetching.
- * Uses Apollo Client under the hood with proper caching strategies.
- * 
- * ⚠️ STAGING ONLY - This repo is configured exclusively for staging.
- * Do NOT use this codebase for production deployments.
+ * Uses Apollo Client with Next.js App Router support.
+ * Configured for server-side rendering with proper caching.
  */
 
-import {
-  ApolloClient,
-  InMemoryCache,
-  HttpLink,
-  type DocumentNode,
-  type TypedDocumentNode,
-  type OperationVariables,
-  type ApolloQueryResult,
-  type NormalizedCacheObject,
-} from '@apollo/client';
+import { ApolloClient, InMemoryCache, HttpLink, NormalizedCacheObject } from '@apollo/client';
+import { registerApolloClient } from '@apollo/experimental-nextjs-app-support/rsc';
 
-/**
- * =====================================================
- * STAGING ENVIRONMENT CONFIGURATION
- * =====================================================
- * 
- * This repository is STAGING ONLY.
- * Uses environment variable for WordPress URL to support both
- * local development and Vercel deployment.
- * 
- * DO NOT modify these values for production use.
- * Create a separate repository for production deployments.
- * =====================================================
- */
+// WordPress GraphQL endpoint - use environment variable or fallback to staging
+export const wordpressUrl = process.env.NEXT_PUBLIC_WORDPRESS_URL || 'https://bhfestagingurl.wpenginepowered.com';
+export const graphqlEndpoint = process.env.WORDPRESS_GRAPHQL_ENDPOINT || `${wordpressUrl}/graphql`;
 
-// STAGING: WordPress URL from environment (required for Vercel)
-// Fallback to local URL for development
-const WORDPRESS_URL = process.env.NEXT_PUBLIC_WORDPRESS_URL || 'http://beacon-hill-staging.local';
-const GRAPHQL_ENDPOINT = `${WORDPRESS_URL}/graphql`;
-
-// Log the endpoint being used (helpful for debugging)
-if (typeof window === 'undefined') {
-  console.log(`[GraphQL] Using endpoint: ${GRAPHQL_ENDPOINT}`);
-}
-
-/**
- * Cache configuration for Apollo Client
- */
-const cache = new InMemoryCache({
-  typePolicies: {
-    // Merge paginated queries properly
-    RootQuery: {
-      queryType: true,
-    },
-    // Normalize course objects by databaseId
-    FlmsCourse: {
-      keyFields: ['databaseId'],
-    },
-    // Normalize posts by databaseId
-    Post: {
-      keyFields: ['databaseId'],
-    },
-    // Normalize pages by databaseId
-    Page: {
-      keyFields: ['databaseId'],
-    },
-  },
-});
-
-/**
- * Create a new Apollo Client instance
- * For server-side rendering, we create a new client per request
- */
-function createClient(): ApolloClient<NormalizedCacheObject> {
+// Create Apollo Client for RSC (React Server Components)
+export const { getClient } = registerApolloClient(() => {
   return new ApolloClient({
     cache: new InMemoryCache(),
     link: new HttpLink({
-      uri: GRAPHQL_ENDPOINT,
+      uri: graphqlEndpoint,
       fetchOptions: {
-        // Disable caching for SSR to ensure fresh data
-        cache: 'no-store',
+        cache: 'no-store', // Disable fetch cache for fresh data
       },
     }),
     defaultOptions: {
@@ -88,159 +29,76 @@ function createClient(): ApolloClient<NormalizedCacheObject> {
       },
     },
   });
-}
-
-// Singleton client for client-side usage
-let clientSideClient: ApolloClient<NormalizedCacheObject> | null = null;
+});
 
 /**
- * Get Apollo Client instance
- * - Server-side: Creates new instance per request
- * - Client-side: Returns singleton instance
+ * Execute a GraphQL query with proper typing
  */
-export function getClient(): ApolloClient<NormalizedCacheObject> {
-  // Server-side: always create fresh client
-  if (typeof window === 'undefined') {
-    return createClient();
-  }
-
-  // Client-side: use singleton
-  if (!clientSideClient) {
-    clientSideClient = new ApolloClient({
-      cache,
-      link: new HttpLink({
-        uri: GRAPHQL_ENDPOINT,
-      }),
-    });
-  }
-
-  return clientSideClient;
-}
-
-/**
- * Query result type
- */
-export type QueryResult<TData> = {
-  data: TData | null;
-  error: Error | null;
-  loading: boolean;
-};
-
-/**
- * Execute a typed GraphQL query
- * 
- * @param document - The GraphQL document (query)
- * @param variables - Query variables
- * @returns Typed query result
- * 
- * @example
- * ```ts
- * import { GetCoursesDocument, GetCoursesQuery } from '@/graphql/queries/getCourses.generated';
- * 
- * const result = await query(GetCoursesDocument, { first: 10 });
- * // result.data is typed as GetCoursesQuery
- * ```
- */
-export async function query<TData = unknown, TVariables extends OperationVariables = OperationVariables>(
-  document: DocumentNode | TypedDocumentNode<TData, TVariables>,
+export async function query<TData, TVariables extends Record<string, unknown> = Record<string, unknown>>(
+  document: Parameters<ReturnType<typeof getClient>['query']>[0]['query'],
   variables?: TVariables
-): Promise<QueryResult<TData>> {
+): Promise<TData> {
   const client = getClient();
+  const { data, errors } = await client.query<TData>({
+    query: document,
+    variables,
+  });
 
-  try {
-    const result: ApolloQueryResult<TData> = await client.query({
-      query: document,
+  if (errors && errors.length > 0) {
+    console.error('GraphQL Errors:', errors);
+  }
+
+  return data;
+}
+
+/**
+ * Execute a GraphQL query with Next.js revalidation
+ */
+export async function queryWithRevalidation<TData>(
+  queryString: string,
+  variables?: Record<string, unknown>,
+  revalidate: number = 60
+): Promise<TData> {
+  const response = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: queryString,
       variables,
-    });
+    }),
+    next: {
+      revalidate,
+    },
+  });
 
-    return {
-      data: result.data,
-      error: result.error ? new Error(result.error.message) : null,
-      loading: false,
-    };
-  } catch (err) {
-    const error = err instanceof Error ? err : new Error('Unknown error occurred');
-    console.error('[GraphQL Error]', error.message);
-    
-    return {
-      data: null,
-      error,
-      loading: false,
-    };
+  const { data, errors } = await response.json();
+
+  if (errors && errors.length > 0) {
+    console.error('GraphQL Errors:', errors);
   }
+
+  return data;
 }
 
 /**
- * Execute a GraphQL query with revalidation options for Next.js
- * 
- * @param document - The GraphQL document
- * @param variables - Query variables
- * @param options - Fetch options including revalidation
+ * Simple fetch-based GraphQL query for use in API routes
  */
-export async function queryWithRevalidation<
-  TData = unknown,
-  TVariables extends OperationVariables = OperationVariables
->(
-  document: DocumentNode | TypedDocumentNode<TData, TVariables>,
-  variables?: TVariables,
-  options: {
-    revalidate?: number | false;
-    tags?: string[];
-  } = {}
-): Promise<QueryResult<TData>> {
-  const { revalidate = 60, tags } = options;
+export async function fetchGraphQL<TData>(
+  query: string,
+  variables?: Record<string, unknown>
+): Promise<{ data: TData; errors?: Array<{ message: string }> }> {
+  const response = await fetch(graphqlEndpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query,
+      variables,
+    }),
+  });
 
-  try {
-    const response = await fetch(GRAPHQL_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        query: (document as any).loc?.source?.body || document,
-        variables,
-      }),
-      next: {
-        revalidate,
-        tags,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-
-    const result = await response.json();
-
-    if (result.errors) {
-      console.error('[GraphQL Errors]', result.errors);
-      throw new Error(result.errors[0]?.message || 'GraphQL error');
-    }
-
-    return {
-      data: result.data as TData,
-      error: null,
-      loading: false,
-    };
-  } catch (err) {
-    const error = err instanceof Error ? err : new Error('Unknown error');
-    console.error('[GraphQL Fetch Error]', error.message);
-    
-    return {
-      data: null,
-      error,
-      loading: false,
-    };
-  }
+  return response.json();
 }
-
-/**
- * GraphQL endpoint URL (for debugging/logging)
- */
-export const graphqlEndpoint = GRAPHQL_ENDPOINT;
-
-/**
- * WordPress URL (for image optimization, etc.)
- */
-export const wordpressUrl = WORDPRESS_URL;
-
