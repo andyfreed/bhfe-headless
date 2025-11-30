@@ -37,7 +37,7 @@ interface CourseCredit {
   type?: string | null;
 }
 
-interface Course {
+export interface Course {
   id: string;
   databaseId?: number;
   title?: string | null;

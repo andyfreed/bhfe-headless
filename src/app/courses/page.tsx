@@ -8,7 +8,7 @@
 import { Metadata } from 'next';
 import { Suspense } from 'react';
 import { getAllCourses, hasData, extractNodes } from '@/lib/wp';
-import { CourseFilters } from '@/components/CourseFilters';
+import { CourseFilters, Course } from '@/components/CourseFilters';
 
 export const revalidate = 60;
 
@@ -58,7 +58,7 @@ function CoursesSkeleton() {
 // Courses content component
 async function CoursesContent() {
   const result = await getAllCourses({ first: 200 });
-  const courses = hasData(result) ? extractNodes(result.data.flmsCourses) : [];
+  const courses = (hasData(result) ? extractNodes(result.data.flmsCourses) : []) as Course[];
   const error = result.error;
 
   if (error) {
