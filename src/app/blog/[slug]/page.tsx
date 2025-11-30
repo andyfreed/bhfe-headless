@@ -98,7 +98,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           {/* Categories */}
           {post.categories?.nodes && post.categories.nodes.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-4">
-              {post.categories.nodes.map((cat) => (
+              {post.categories.nodes.map((cat: { id: string; name?: string | null }) => (
                 <span
                   key={cat.id}
                   className="text-xs font-semibold bg-amber-500 text-slate-900 px-3 py-1 rounded-full"
