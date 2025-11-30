@@ -1,6 +1,20 @@
 import Link from 'next/link';
 import { getFeaturedCourses, getSiteData, extractNodes, hasData } from '@/lib/wp';
 
+// Course type for homepage
+interface HomeCourse {
+  id: string;
+  databaseId?: number;
+  title?: string | null;
+  uri?: string | null;
+  courseNumber?: string | null;
+  courseDescription?: string | null;
+  courseCredits?: Array<{
+    name?: string | null;
+    credits?: string | null;
+  } | null> | null;
+}
+
 export default async function HomePage() {
   // Fetch data using typed fetchers
   const [coursesResult, settingsResult] = await Promise.all([
@@ -8,9 +22,9 @@ export default async function HomePage() {
     getSiteData(),
   ]);
 
-  const courses = hasData(coursesResult) 
+  const courses = (hasData(coursesResult) 
     ? extractNodes(coursesResult.data.flmsCourses) 
-    : [];
+    : []) as HomeCourse[];
   
   const settings = hasData(settingsResult) 
     ? settingsResult.data.generalSettings 
@@ -139,4 +153,3 @@ export default async function HomePage() {
     </div>
   );
 }
-
