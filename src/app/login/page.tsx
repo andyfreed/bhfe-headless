@@ -291,7 +291,7 @@ export default function LoginPage() {
           {/* Back to WordPress Login */}
           <div className="mt-6 text-center">
             <a 
-              href="http://beacon-hill-staging.local/my-account"
+              href={process.env.NEXT_PUBLIC_WORDPRESS_URL ? `${process.env.NEXT_PUBLIC_WORDPRESS_URL}/my-account` : '/my-account'}
               className="text-sm text-slate-500 hover:text-slate-700 underline transition-colors"
             >
               Use WordPress Login →
@@ -302,5 +302,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-
