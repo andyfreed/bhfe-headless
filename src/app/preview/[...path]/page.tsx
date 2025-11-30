@@ -10,15 +10,14 @@ import { Metadata } from 'next';
 import { getPreviewData } from '@/lib/preview';
 import { PreviewBanner, PreviewWrapper } from '@/components/PreviewBanner';
 import { resolveTemplate } from '@/templates';
-import { getClient } from '@/lib/gqlClient';
-import { gql } from '@apollo/client';
+import { query } from '@/lib/gqlClient';
 
 // Force dynamic rendering for previews
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
 // GraphQL query for preview content
-const GET_PREVIEW_CONTENT = gql`
+const GET_PREVIEW_CONTENT = `
   query GetPreviewContent($id: ID!, $asPreview: Boolean = true) {
     contentNode(id: $id, idType: DATABASE_ID, asPreview: $asPreview) {
       __typename
@@ -157,17 +156,17 @@ export default async function PreviewPage({ params }: PreviewPageProps) {
 
   // Fetch the preview content
   try {
-    const { data, errors } = await getClient().query({
-      query: GET_PREVIEW_CONTENT,
-      variables: {
+    const data = await query<{ contentNode: any }>(
+      GET_PREVIEW_CONTENT,
+      {
         id: resolvedPostId,
         asPreview: true,
       },
-      fetchPolicy: 'no-cache', // Always fetch fresh for previews
-    });
+      { revalidate: 0 }
+    );
 
-    if (errors || !data?.contentNode) {
-      console.error('Preview fetch error:', errors);
+    if (!data?.contentNode) {
+      console.error('Preview fetch error: No content found');
       return (
         <>
           <PreviewBanner isPreview={isPreview} postType={resolvedPostType} postId={resolvedPostId} />
@@ -233,4 +232,3 @@ export default async function PreviewPage({ params }: PreviewPageProps) {
     );
   }
 }
-
