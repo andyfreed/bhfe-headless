@@ -6,8 +6,6 @@
  */
 
 export { getClient, query, queryWithRevalidation, graphqlEndpoint, wordpressUrl } from './gqlClient';
-export type { QueryResult } from './gqlClient';
 
 // Re-export all WordPress fetchers
 export * from './wp';
-
