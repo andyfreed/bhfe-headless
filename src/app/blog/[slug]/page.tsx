@@ -27,8 +27,8 @@ export async function generateStaticParams() {
   }
 
   return result.data.posts.nodes
-    .filter((post) => post.slug)
-    .map((post) => ({
+    .filter((post: { slug?: string | null }) => post.slug)
+    .map((post: { slug?: string | null }) => ({
       slug: post.slug!,
     }));
 }
@@ -186,4 +186,3 @@ export default async function BlogPostPage({ params }: PageProps) {
     </main>
   );
 }
-
