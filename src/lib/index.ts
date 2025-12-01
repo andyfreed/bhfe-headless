@@ -11,7 +11,6 @@ export {
   queryWithRevalidation,
   graphqlEndpoint,
   wordpressUrl,
-  type QueryResult,
 } from './gqlClient';
 
 // WordPress Data Fetchers
