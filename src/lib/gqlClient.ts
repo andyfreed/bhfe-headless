@@ -6,7 +6,7 @@
  */
 
 // WordPress GraphQL endpoint - use environment variable or fallback to staging
-export const wordpressUrl = process.env.NEXT_PUBLIC_WORDPRESS_URL || 'https://bhfestagingurl.wpenginepowered.com';
+export const wordpressUrl = process.env.NEXT_PUBLIC_WORDPRESS_URL || 'https://beaconhilldevs.wpenginepowered.com';
 export const graphqlEndpoint = process.env.WORDPRESS_GRAPHQL_ENDPOINT || `${wordpressUrl}/graphql`;
 
 /**
