@@ -10,7 +10,8 @@ import {
   EyeIcon, 
   EyeSlashIcon,
   ArrowRightIcon,
-  AcademicCapIcon
+  AcademicCapIcon,
+  UserIcon
 } from '@heroicons/react/24/outline';
 
 function LoginForm() {
@@ -19,7 +20,7 @@ function LoginForm() {
   const callbackUrl = searchParams.get('callbackUrl') || '/';
   const errorParam = searchParams.get('error');
   
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -33,14 +34,14 @@ function LoginForm() {
 
     try {
       const result = await signIn('credentials', {
-        email,
+        email: username, // NextAuth expects 'email' but we send username/email
         password,
         redirect: false,
         callbackUrl,
       });
 
       if (result?.error) {
-        setError('Invalid email or password. Please try again.');
+        setError('Invalid username or password. Please try again.');
       } else if (result?.ok) {
         router.push(callbackUrl);
         router.refresh();
@@ -83,23 +84,23 @@ function LoginForm() {
 
       {/* Login Form */}
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Email Field */}
+        {/* Username/Email Field */}
         <div>
-          <label htmlFor="email" className="block text-sm font-semibold text-slate-700 mb-2">
-            Email Address
+          <label htmlFor="username" className="block text-sm font-semibold text-slate-700 mb-2">
+            Username or Email
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <EnvelopeIcon className="h-5 w-5 text-slate-400" />
+              <UserIcon className="h-5 w-5 text-slate-400" />
             </div>
             <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
               className="block w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-              placeholder="you@example.com"
+              placeholder="username or email"
             />
           </div>
         </div>
