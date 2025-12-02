@@ -2,14 +2,14 @@
  * NextAuth.js Configuration for WordPress Authentication
  * 
  * Uses WordPress REST API + JWT Authentication plugin to authenticate users.
- * Requires WPGraphQL JWT Authentication plugin on WordPress side.
+ * Requires JWT Authentication for WP REST API plugin on WordPress side.
  */
 
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 
-// WordPress GraphQL endpoint
-const WORDPRESS_URL = process.env.NEXT_PUBLIC_WORDPRESS_URL || 'https://bhfestagingurl.wpenginepowered.com';
+// WordPress URL - use environment variable or fallback to staging
+const WORDPRESS_URL = process.env.NEXT_PUBLIC_WORDPRESS_URL || 'https://beaconhilldevs.wpenginepowered.com';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   pages: {
