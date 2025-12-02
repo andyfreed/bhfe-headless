@@ -10,55 +10,84 @@ export const wordpressUrl = process.env.NEXT_PUBLIC_WORDPRESS_URL || 'https://be
 export const graphqlEndpoint = process.env.WORDPRESS_GRAPHQL_ENDPOINT || `${wordpressUrl}/graphql`;
 
 /**
+ * Query result wrapper type
+ */
+export type QueryResult<T> = {
+  data: T | null;
+  error: Error | null;
+};
+
+/**
  * Execute a GraphQL query with Next.js caching
  */
-export async function query<TData = unknown>(
+export async function query<TData = unknown, TVariables = Record<string, unknown>>(
   queryString: string,
-  variables?: Record<string, unknown>,
+  variables?: TVariables,
   options?: {
     revalidate?: number | false;
     tags?: string[];
   }
-): Promise<TData> {
+): Promise<QueryResult<TData>> {
   const { revalidate = 60, tags } = options || {};
 
-  const response = await fetch(graphqlEndpoint, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      query: queryString,
-      variables,
-    }),
-    next: {
-      revalidate,
-      tags,
-    },
-  });
+  try {
+    const response = await fetch(graphqlEndpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query: queryString,
+        variables,
+      }),
+      next: {
+        revalidate,
+        tags,
+      },
+    });
 
-  if (!response.ok) {
-    throw new Error(`GraphQL request failed: ${response.status} ${response.statusText}`);
+    if (!response.ok) {
+      return {
+        data: null,
+        error: new Error(`GraphQL request failed: ${response.status} ${response.statusText}`),
+      };
+    }
+
+    const { data, errors } = await response.json();
+
+    if (errors && errors.length > 0) {
+      console.error('GraphQL Errors:', errors);
+      return {
+        data: data as TData | null,
+        error: new Error(errors[0]?.message || 'GraphQL error'),
+      };
+    }
+
+    return {
+      data: data as TData,
+      error: null,
+    };
+  } catch (err) {
+    return {
+      data: null,
+      error: err instanceof Error ? err : new Error('Unknown error'),
+    };
   }
-
-  const { data, errors } = await response.json();
-
-  if (errors && errors.length > 0) {
-    console.error('GraphQL Errors:', errors);
-  }
-
-  return data as TData;
 }
 
 /**
- * Execute a GraphQL query with revalidation (alias for backward compatibility)
+ * Execute a GraphQL query with revalidation
  */
-export async function queryWithRevalidation<TData = unknown>(
+export async function queryWithRevalidation<TData = unknown, TVariables = Record<string, unknown>>(
   queryString: string,
-  variables?: Record<string, unknown>,
-  revalidate: number = 60
-): Promise<TData> {
-  return query<TData>(queryString, variables, { revalidate });
+  variables?: TVariables,
+  options?: {
+    revalidate?: number;
+    tags?: string[];
+  }
+): Promise<QueryResult<TData>> {
+  const { revalidate = 60, tags } = options || {};
+  return query<TData, TVariables>(queryString, variables, { revalidate, tags });
 }
 
 /**
@@ -95,8 +124,8 @@ export function getClient() {
       query: string; 
       variables?: Record<string, unknown>;
     }) => {
-      const data = await query<TData>(queryDoc, variables);
-      return { data, errors: null };
+      const result = await query<TData>(queryDoc, variables);
+      return { data: result.data, errors: result.error ? [result.error] : null };
     },
   };
 }
