@@ -156,7 +156,7 @@ export default async function PreviewPage({ params }: PreviewPageProps) {
 
   // Fetch the preview content
   try {
-    const data = await query<{ contentNode: any }>(
+    const result = await query<{ contentNode: any }>(
       GET_PREVIEW_CONTENT,
       {
         id: resolvedPostId,
@@ -165,8 +165,8 @@ export default async function PreviewPage({ params }: PreviewPageProps) {
       { revalidate: 0 }
     );
 
-    if (!data?.contentNode) {
-      console.error('Preview fetch error: No content found');
+    if (result.error || !result.data?.contentNode) {
+      console.error('Preview fetch error:', result.error || 'No content found');
       return (
         <>
           <PreviewBanner isPreview={isPreview} postType={resolvedPostType} postId={resolvedPostId} />
@@ -189,7 +189,7 @@ export default async function PreviewPage({ params }: PreviewPageProps) {
       );
     }
 
-    const node = data.contentNode;
+    const node = result.data.contentNode;
     const typename = node.__typename || 'ContentNode';
     const templateName = node.template?.templateName;
 
