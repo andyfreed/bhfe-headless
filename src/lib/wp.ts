@@ -5,7 +5,6 @@
  * All functions use the GraphQL codegen types for full type safety.
  */
 
-import { gql } from '@apollo/client';
 import { query, queryWithRevalidation, type QueryResult } from './gqlClient';
 
 // Import generated types - Posts
@@ -60,7 +59,7 @@ import type {
 // POSTS
 // ============================================
 
-const GET_POSTS = gql`
+const GET_POSTS = `
   query GetPosts($first: Int = 10, $after: String) {
     posts(first: $first, after: $after) {
       nodes {
@@ -99,7 +98,7 @@ const GET_POSTS = gql`
   }
 `;
 
-const GET_POST_BY_SLUG = gql`
+const GET_POST_BY_SLUG = `
   query GetPostBySlug($slug: ID!) {
     post(id: $slug, idType: SLUG) {
       id
@@ -145,7 +144,7 @@ const GET_POST_BY_SLUG = gql`
   }
 `;
 
-const GET_ALL_POST_SLUGS = gql`
+const GET_ALL_POST_SLUGS = `
   query GetAllPostSlugs($first: Int = 100) {
     posts(first: $first) {
       nodes {
@@ -203,7 +202,7 @@ export async function getAllPostSlugs(): Promise<QueryResult<GetAllPostSlugsQuer
 // PAGES
 // ============================================
 
-const GET_PAGES = gql`
+const GET_PAGES = `
   query GetPages($first: Int = 100) {
     pages(first: $first, where: { status: PUBLISH }) {
       nodes {
@@ -237,7 +236,7 @@ const GET_PAGES = gql`
   }
 `;
 
-const GET_PAGE_BY_URI = gql`
+const GET_PAGE_BY_URI = `
   query GetPageByUri($uri: ID!) {
     page(id: $uri, idType: URI) {
       id
@@ -282,7 +281,7 @@ const GET_PAGE_BY_URI = gql`
   }
 `;
 
-const GET_ALL_PAGE_URIS = gql`
+const GET_ALL_PAGE_URIS = `
   query GetAllPageUris($first: Int = 100) {
     pages(first: $first, where: { status: PUBLISH }) {
       nodes {
@@ -339,7 +338,7 @@ export async function getAllPageUris(): Promise<QueryResult<GetAllPageUrisQuery>
 // CONTENT NODE (GENERIC)
 // ============================================
 
-const GET_CONTENT_BY_URI = gql`
+const GET_CONTENT_BY_URI = `
   query GetContentByUri($uri: String!) {
     nodeByUri(uri: $uri) {
       __typename
@@ -441,7 +440,7 @@ const GET_CONTENT_BY_URI = gql`
   }
 `;
 
-const GET_CONTENT_TYPE_BY_URI = gql`
+const GET_CONTENT_TYPE_BY_URI = `
   query GetContentTypeByUri($uri: String!) {
     nodeByUri(uri: $uri) {
       __typename
@@ -496,7 +495,7 @@ export async function getContentTypeByUri(
 // COURSES
 // ============================================
 
-const GET_COURSES = gql`
+const GET_COURSES = `
   query GetCourses($first: Int = 50, $after: String) {
     flmsCourses(first: $first, after: $after) {
       nodes {
@@ -535,7 +534,7 @@ const GET_COURSES = gql`
   }
 `;
 
-const GET_COURSE_CARDS = gql`
+const GET_COURSE_CARDS = `
   query GetCourseCards($first: Int = 50, $after: String) {
     flmsCourses(first: $first, after: $after) {
       nodes {
@@ -557,7 +556,7 @@ const GET_COURSE_CARDS = gql`
   }
 `;
 
-const GET_COURSE_BY_SLUG = gql`
+const GET_COURSE_BY_SLUG = `
   query GetCourseBySlug($slug: ID!) {
     flmsCourse(id: $slug, idType: SLUG) {
       id
@@ -588,7 +587,7 @@ const GET_COURSE_BY_SLUG = gql`
   }
 `;
 
-const GET_ALL_COURSE_SLUGS = gql`
+const GET_ALL_COURSE_SLUGS = `
   query GetAllCourseSlugs($first: Int = 200) {
     flmsCourses(first: $first) {
       nodes {
@@ -601,7 +600,7 @@ const GET_ALL_COURSE_SLUGS = gql`
   }
 `;
 
-const GET_FEATURED_COURSES = gql`
+const GET_FEATURED_COURSES = `
   query GetFeaturedCoursesHomepage($first: Int = 6) {
     flmsCourses(first: $first) {
       nodes {
@@ -701,7 +700,7 @@ export async function getFeaturedCourses(
 // SITE SETTINGS
 // ============================================
 
-const GET_SITE_SETTINGS = gql`
+const GET_SITE_SETTINGS = `
   query GetSiteSettings {
     generalSettings {
       title
@@ -715,7 +714,7 @@ const GET_SITE_SETTINGS = gql`
   }
 `;
 
-const GET_SITE_DATA = gql`
+const GET_SITE_DATA = `
   query GetSiteData {
     generalSettings {
       title
@@ -802,4 +801,3 @@ export function isCategory(node: { __typename?: string }): boolean {
 export function isTag(node: { __typename?: string }): boolean {
   return node.__typename === 'Tag';
 }
-
