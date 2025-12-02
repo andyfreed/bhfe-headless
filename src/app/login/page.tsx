@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import { 
   EnvelopeIcon, 
   LockClosedIcon, 
@@ -15,11 +15,15 @@ import {
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl') || '/';
+  const errorParam = searchParams.get('error');
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(errorParam ? 'Invalid credentials. Please try again.' : '');
   const [rememberMe, setRememberMe] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -28,15 +32,19 @@ export default function LoginPage() {
     setError('');
 
     try {
-      // TODO: Implement WordPress authentication
-      // This would typically call a REST API endpoint or GraphQL mutation
-      console.log('Login attempt:', { email, password, rememberMe });
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // For now, show a message
-      setError('Authentication not yet configured. Please use WordPress login.');
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+        callbackUrl,
+      });
+
+      if (result?.error) {
+        setError('Invalid email or password. Please try again.');
+      } else if (result?.ok) {
+        router.push(callbackUrl);
+        router.refresh();
+      }
     } catch (err) {
       setError('An error occurred. Please try again.');
     } finally {
@@ -291,7 +299,7 @@ export default function LoginPage() {
           {/* Back to WordPress Login */}
           <div className="mt-6 text-center">
             <a 
-              href={process.env.NEXT_PUBLIC_WORDPRESS_URL ? `${process.env.NEXT_PUBLIC_WORDPRESS_URL}/my-account` : '/my-account'}
+              href={`${process.env.NEXT_PUBLIC_WORDPRESS_URL || ''}/my-account`}
               className="text-sm text-slate-500 hover:text-slate-700 underline transition-colors"
             >
               Use WordPress Login →
